@@ -1,0 +1,18 @@
+---
+title: "About"
+comments: false
+description: "Blog maintained by Pramesh Gautam"
+image: cover.jpeg
+about:
+  template: jolla
+  links:
+    - icon: twitter
+      text: Twitter
+      href: https://twitter.com/pmgautam_
+    - icon: linkedin
+      text: LinkedIn
+      href: https://www.linkedin.com/in/gautampramesh
+    - icon: github
+      text: Github
+      href: https://github.com/pmgautam
+---

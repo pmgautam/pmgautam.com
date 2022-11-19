@@ -1,0 +1,46 @@
+project:
+  type: website
+  output-dir: docs
+
+website:
+  title: "Home"
+  site-url: https://www.pmgautam.com
+  description: "A blog by Pramesh Gautam"
+  google-analytics: G-QF37WT63GC
+  search:
+    location: navbar
+    type: overlay
+  navbar:
+    title: false
+    logo: cover.jpeg
+    logo-alt: A blog by Pramesh Gautam
+    background: primary
+    right:
+      - about.qmd
+      - icon: github
+        href: https://github.com/pmgautam
+      - icon: twitter
+        href: https://twitter.com/pmgautam_
+      - icon: linkedin
+        href: https://www.linkedin.com/in/gautampramesh
+    left:
+      - text: "Home"
+        file: index.qmd
+  open-graph: true
+  twitter-card: 
+    site: "@pmgautam"
+  comments:
+    utterances:
+      repo: pmgautam/pmgautam.com
+format:
+  html:
+    theme:
+      light: flatly
+      dark: darkly
+    css: styles.css
+execute:
+  freeze: true
+    
+
+
+
