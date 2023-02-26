@@ -1,4 +1,4 @@
-Blog by Pramesh Gautam on topics related Machine Learning.
+Blog dedicated to contents on Machine Learning. You visit the blog [here](http://pmgautam.com/).
 
 This blog is built using [Quarto](https://quarto.org/)
 
