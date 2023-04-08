@@ -2,6 +2,7 @@
   {
     "listing": "/index.html",
     "items": [
+      "/posts/openai-clip-explained.html",
       "/posts/barlow-twins-explanation.html",
       "/posts/class-activation-map-explained.html",
       "/posts/augmentations-visually-explained.html",

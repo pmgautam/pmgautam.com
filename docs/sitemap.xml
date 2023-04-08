@@ -2,26 +2,30 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
     <loc>https://www.pmgautam.com/about.html</loc>
-    <lastmod>2023-02-18T12:55:35.125Z</lastmod>
+    <lastmod>2023-04-08T15:08:28.444Z</lastmod>
   </url>
   <url>
     <loc>https://www.pmgautam.com/index.html</loc>
-    <lastmod>2023-02-18T12:55:35.519Z</lastmod>
+    <lastmod>2023-04-08T15:08:28.932Z</lastmod>
   </url>
   <url>
     <loc>https://www.pmgautam.com/posts/augmentations-visually-explained.html</loc>
-    <lastmod>2023-02-18T12:55:35.946Z</lastmod>
+    <lastmod>2023-04-08T15:08:29.384Z</lastmod>
   </url>
   <url>
     <loc>https://www.pmgautam.com/posts/barlow-twins-explanation.html</loc>
-    <lastmod>2023-02-18T12:55:36.322Z</lastmod>
+    <lastmod>2023-04-08T15:08:29.762Z</lastmod>
   </url>
   <url>
     <loc>https://www.pmgautam.com/posts/class-activation-map-explained.html</loc>
-    <lastmod>2023-02-18T12:55:36.721Z</lastmod>
+    <lastmod>2023-04-08T15:08:30.258Z</lastmod>
   </url>
   <url>
     <loc>https://www.pmgautam.com/posts/knowledge-Distillation-explained.html</loc>
-    <lastmod>2023-02-18T12:55:37.098Z</lastmod>
+    <lastmod>2023-04-08T15:08:30.725Z</lastmod>
+  </url>
+  <url>
+    <loc>https://www.pmgautam.com/posts/openai-clip-explained.html</loc>
+    <lastmod>2023-04-08T15:08:31.118Z</lastmod>
   </url>
 </urlset>
