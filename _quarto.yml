@@ -3,7 +3,7 @@ project:
   output-dir: docs
 
 website:
-  title: "Home"
+  title: ""
   site-url: https://www.pmgautam.com
   description: "A blog by Pramesh Gautam"
   google-analytics: G-QF37WT63GC
@@ -12,7 +12,7 @@ website:
     type: overlay
   navbar:
     title: false
-    logo: cover.jpeg
+    logo: cover_stable_diffusion.jpeg
     logo-alt: A blog by Pramesh Gautam
     background: primary
     right:
