@@ -3,7 +3,7 @@ project:
   output-dir: docs
 
 website:
-  title: ""
+  title: "A blog by Pramesh Gautam"
   site-url: https://www.pmgautam.com
   description: "A blog by Pramesh Gautam"
   google-analytics: G-QF37WT63GC
@@ -28,7 +28,7 @@ website:
         file: index.qmd
   open-graph: true
   twitter-card: 
-    site: "@pmgautam"
+    site: "@pmgautam_"
   comments:
     utterances:
       repo: pmgautam/pmgautam.com
