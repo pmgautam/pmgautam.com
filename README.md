@@ -1,8 +1,33 @@
-Blog dedicated to contents on Machine Learning. You visit the blog [here](http://pmgautam.com/).
+Blog covering topics in Machine Learning, Deep Learning, Gen AI, Data, and Software Engineering.
 
-This blog is built using [Quarto](https://quarto.org/)
+🔗 **Live Site:** [pmgautam.com](https://pmgautam.com)
 
-If you find something is not correct or needs improvement, please feel free to open pull requests or reach out to me in any of the following platforms.
-* [Twitter](https://twitter.com/pmgautam_)
-* [Linkedin](https://www.linkedin.com/in/gautampramesh)
+## About
+
+This blog is where I share insights, tutorials, and explorations in AI/ML technologies. Built with [Quarto](https://quarto.org/), the site features interactive Jupyter notebooks and technical articles.
+
+## Tech Stack
+
+- **Framework:** Quarto
+- **Notebooks:** Jupyter with Python
+- **Deployment:** GitHub Pages
+- **Styling:** Custom CSS with light/dark themes
+
+## Local Development
+
+### Prerequisites
+
+- Python 3.8+
+- Quarto CLI ([installation guide](https://quarto.org/docs/get-started/))
+
+
+## Contributing
+
+Found an issue or have a suggestion? Feel free to:
+- Open an issue or pull request
+- Reach out via [Twitter](https://twitter.com/pmgautam_) or [LinkedIn](https://www.linkedin.com/in/gautampramesh)
+
+## License
+
+See [LICENSE](LICENSE) file for details.
 
