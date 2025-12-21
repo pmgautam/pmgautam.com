@@ -5,8 +5,9 @@ project:
 website:
   title: "A blog by Pramesh Gautam"
   site-url: https://www.pmgautam.com
-  description: "A blog by Pramesh Gautam"
+  description: "Machine Learning, Deep Learning, and AI blog by Pramesh Gautam."
   google-analytics: G-QF37WT63GC
+  favicon: cover_stable_diffusion.jpeg
   search:
     location: navbar
     type: overlay
@@ -26,9 +27,13 @@ website:
     left:
       - text: "Home"
         file: index.qmd
-  open-graph: true
-  twitter-card: 
+  open-graph:
+    site-name: "Pramesh Gautam's Blog"
+    locale: en_US
+  twitter-card:
+    creator: "@pmgautam_"
     site: "@pmgautam_"
+    card-style: summary_large_image
   comments:
     utterances:
       repo: pmgautam/pmgautam.com

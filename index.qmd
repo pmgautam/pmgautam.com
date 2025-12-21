@@ -1,5 +1,7 @@
 ---
 title: "A blog by Pramesh Gautam"
+description: "Easy and intuitive explanations on Machine Learning, Deep Learning, Gen AI, and Software Engineering."
+pagetitle: "Machine Learning & AI Insights"
 comments: false
 listing:
   contents: posts

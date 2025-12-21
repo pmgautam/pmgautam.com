@@ -6,3 +6,11 @@ freeze: true
 
 # Enable banner style title blocks
 title-block-banner: true
+
+# Author information for all posts
+author: Pramesh Gautam
+
+# Open Graph and Twitter Card defaults
+open-graph: true
+twitter-card:
+  creator: "@pmgautam_"

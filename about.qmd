@@ -1,7 +1,8 @@
 ---
 title: "About Me"
+pagetitle: "About Pramesh Gautam - Principal AI Engineer | ML | DL | Gen AI | Teaching"
 comments: false
-description: "Principal AI Engineer | Machine Learning | Gen AI"
+description: "Pramesh Gautam is a Principal AI Engineer at Leapfrog Technology specializing in Machine Learning, Deep Learning, Gen AI, and Software Engineering."
 image: cover.jpeg
 about:
   template: trestles
@@ -21,8 +22,6 @@ about:
       href: https://twitter.com/pmgautam_
       aria-label: "Twitter profile"
 ---
-
-I currently work as a Principal AI Engineer at Leapfrog Technology.
 
 **Email:** prms\<last_name\> [at] gmail [dot] com
 
