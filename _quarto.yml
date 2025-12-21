@@ -25,7 +25,7 @@ website:
       - icon: linkedin
         href: https://www.linkedin.com/in/gautampramesh
     left:
-      - text: "Home"
+      - text: "Blogs"
         file: index.qmd
   open-graph:
     site-name: "Pramesh Gautam's Blog"
