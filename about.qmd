@@ -22,7 +22,7 @@ about:
       aria-label: "Twitter profile"
 ---
 
-I currently work as a **Principal AI Engineer** at **Leapfrog Technology**.
+I currently work as a Principal AI Engineer at Leapfrog Technology.
 
 **Email:** prms\<last_name\> [at] gmail [dot] com
 
