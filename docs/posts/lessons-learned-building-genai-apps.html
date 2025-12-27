@@ -1,0 +1,973 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.5.57">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="author" content="Pramesh Gautam">
+<meta name="dcterms.date" content="2025-12-28">
+<meta name="description" content="Sharing my experience of writing LLM-based apps">
+
+<title>Lessons Learned Building GenAI apps | Pramesh Gautam – A blog by Pramesh Gautam</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+</style>
+
+
+<script src="../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../">
+<link href="../cover_stable_diffusion.jpeg" rel="icon" type="image/jpeg">
+<script src="../site_libs/quarto-html/quarto.js"></script>
+<script src="../site_libs/quarto-html/popper.min.js"></script>
+<script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-text-highlighting-styles">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-dark.css" rel="prefetch" class="quarto-color-scheme quarto-color-alternate" id="quarto-text-highlighting-styles">
+<script src="../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
+<link href="../site_libs/bootstrap/bootstrap-dark.min.css" rel="prefetch" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+<script async="" src="https://www.googletagmanager.com/gtag/js?id=G-QF37WT63GC"></script>
+
+<script type="text/javascript">
+
+window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('js', new Date());
+gtag('config', 'G-QF37WT63GC', { 'anonymize_ip': true});
+</script>
+
+
+<link rel="stylesheet" href="../styles.css">
+<meta property="og:title" content="Lessons Learned Building GenAI apps | Pramesh Gautam">
+<meta property="og:description" content="Sharing my experience of writing LLM-based apps">
+<meta property="og:image" content="https://www.pmgautam.com/docs/gen-ai-lessons-learned/gen-ai-lessons-learned-cover.jpg">
+<meta property="og:site_name" content="A blog by Pramesh Gautam">
+<meta name="twitter:title" content="Lessons Learned Building GenAI apps | Pramesh Gautam">
+<meta name="twitter:description" content="Sharing my experience of writing LLM-based apps">
+<meta name="twitter:image" content="https://www.pmgautam.com/docs/gen-ai-lessons-learned/gen-ai-lessons-learned-cover.jpg">
+<meta name="twitter:creator" content="@pmgautam_">
+<meta name="twitter:site" content="@pmgautam_">
+<meta name="twitter:card" content="summary_large_image">
+</head>
+
+<body class="nav-fixed">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top quarto-banner">
+    <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container mx-auto">
+    <a href="../index.html" class="navbar-brand navbar-brand-logo">
+    <img src="../cover_stable_diffusion.jpeg" alt="A blog by Pramesh Gautam" class="navbar-logo">
+    </a>
+  </div>
+            <div id="quarto-search" class="" title="Search"></div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" role="menu" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll me-auto">
+  <li class="nav-item">
+    <a class="nav-link" href="../index.html"> 
+<span class="menu-text">Blogs</span></a>
+  </li>  
+</ul>
+            <ul class="navbar-nav navbar-nav-scroll ms-auto">
+  <li class="nav-item">
+    <a class="nav-link" href="../about.html"> 
+<span class="menu-text">About Me</span></a>
+  </li>  
+  <li class="nav-item compact">
+    <a class="nav-link" href="https://github.com/pmgautam"> <i class="bi bi-github" role="img">
+</i> 
+<span class="menu-text"></span></a>
+  </li>  
+  <li class="nav-item compact">
+    <a class="nav-link" href="https://twitter.com/pmgautam_"> <i class="bi bi-twitter" role="img">
+</i> 
+<span class="menu-text"></span></a>
+  </li>  
+  <li class="nav-item compact">
+    <a class="nav-link" href="https://www.linkedin.com/in/gautampramesh"> <i class="bi bi-linkedin" role="img">
+</i> 
+<span class="menu-text"></span></a>
+  </li>  
+</ul>
+          </div> <!-- /navcollapse -->
+            <div class="quarto-navbar-tools">
+  <a href="" class="quarto-color-scheme-toggle quarto-navigation-tool  px-1" onclick="window.quartoToggleColorScheme(); return false;" title="Toggle dark mode"><i class="bi"></i></a>
+</div>
+      </div> <!-- /container-fluid -->
+    </nav>
+</header>
+<!-- content -->
+<header id="title-block-header" class="quarto-title-block default page-columns page-full">
+  <div class="quarto-title-banner page-columns page-full">
+    <div class="quarto-title column-body">
+      <h1 class="title">From PoC to Production: Lessons Learned Building GenAI Apps</h1>
+                  <div>
+        <div class="description">
+          Sharing my experience of writing LLM-based apps
+        </div>
+      </div>
+                          <div class="quarto-categories">
+                <div class="quarto-category">GenAI</div>
+                <div class="quarto-category">Engineering</div>
+                <div class="quarto-category">LLM</div>
+              </div>
+                  </div>
+  </div>
+    
+  
+  <div class="quarto-title-meta">
+
+      <div>
+      <div class="quarto-title-meta-heading">Author</div>
+      <div class="quarto-title-meta-contents">
+               <p>Pramesh Gautam </p>
+            </div>
+    </div>
+      
+      <div>
+      <div class="quarto-title-meta-heading">Published</div>
+      <div class="quarto-title-meta-contents">
+        <p class="date">December 28, 2025</p>
+      </div>
+    </div>
+    
+      
+    </div>
+    
+  
+  </header><div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul class="collapse">
+  <li><a href="#introduction" id="toc-introduction" class="nav-link active" data-scroll-target="#introduction">Introduction</a></li>
+  <li><a href="#understand-the-task" id="toc-understand-the-task" class="nav-link" data-scroll-target="#understand-the-task">1. Understand the Task</a></li>
+  <li><a href="#know-the-datadomain" id="toc-know-the-datadomain" class="nav-link" data-scroll-target="#know-the-datadomain">2. Know the Data/Domain</a></li>
+  <li><a href="#define-evals-early" id="toc-define-evals-early" class="nav-link" data-scroll-target="#define-evals-early">3. Define Evals Early</a></li>
+  <li><a href="#embrace-observability" id="toc-embrace-observability" class="nav-link" data-scroll-target="#embrace-observability">4. Embrace Observability</a></li>
+  <li><a href="#take-clients-onboard" id="toc-take-clients-onboard" class="nav-link" data-scroll-target="#take-clients-onboard">5. Take Clients Onboard</a></li>
+  <li><a href="#cost-considerations-from-day-1" id="toc-cost-considerations-from-day-1" class="nav-link" data-scroll-target="#cost-considerations-from-day-1">6. Cost Considerations from day 1</a></li>
+  <li><a href="#prioritize-the-feedback-loop" id="toc-prioritize-the-feedback-loop" class="nav-link" data-scroll-target="#prioritize-the-feedback-loop">7. Prioritize the Feedback Loop</a></li>
+  <li><a href="#embrace-the-experimental-nature" id="toc-embrace-the-experimental-nature" class="nav-link" data-scroll-target="#embrace-the-experimental-nature">8. Embrace the Experimental Nature</a></li>
+  <li><a href="#treat-prompts-as-code" id="toc-treat-prompts-as-code" class="nav-link" data-scroll-target="#treat-prompts-as-code">9. Treat Prompts as Code</a></li>
+  <li><a href="#frameworks-might-be-overkill" id="toc-frameworks-might-be-overkill" class="nav-link" data-scroll-target="#frameworks-might-be-overkill">10. Frameworks Might Be Overkill</a></li>
+  <li><a href="#error-analysis-is-precious" id="toc-error-analysis-is-precious" class="nav-link" data-scroll-target="#error-analysis-is-precious">11. Error Analysis is Precious</a></li>
+  <li><a href="#expectation-vs-reality-trap" id="toc-expectation-vs-reality-trap" class="nav-link" data-scroll-target="#expectation-vs-reality-trap">12. Expectation vs Reality Trap</a></li>
+  <li><a href="#conclusion" id="toc-conclusion" class="nav-link" data-scroll-target="#conclusion">Conclusion</a></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content quarto-banner-title-block" id="quarto-document-content">
+
+
+
+
+
+<section id="introduction" class="level2">
+<h2 class="anchored" data-anchor-id="introduction">Introduction</h2>
+<p>We’ve pivoted from an era of <strong>“train your own model”</strong> to one of <strong>“call an API.”</strong> On the surface, this shift is incredibly empowering. The barrier to entry has never been lower. However while it is easier than ever to build a prototype, the complexity of shipping a reliable, production-ready system is higher than it’s ever been.</p>
+<p>After spending the last two years building GenAI applications, I’ve seen the good, the bad, and the buggy. I’m sharing these practical lessons not as an expert with all the answers, but as an engineer passing along my notes. Let’s get into the lessons I’ve learned so far.</p>
+<p>This is by no means a complete receipe. You might feel that you do not agree with some of the points and that is totally fine. These are the lessons that I’ve learned and hope they’ll be helpful to you in one way or the other.</p>
+<hr>
+</section>
+<section id="understand-the-task" class="level2">
+<h2 class="anchored" data-anchor-id="understand-the-task">1. Understand the Task</h2>
+<p>Before writing a single line of code, you must deeply understand what you are actually trying to solve. This might sound like “Software Engineering 101,” but in the world of LLM-driven apps, it is where most projects fail.</p>
+<p>Misunderstanding the task is like having a heavy-duty foundation for a commercial warehouse when the client actually needed a residential cottage. You might complete the build on time and under budget, but the end result is useless to the person living there.</p>
+<p>Defining the task isn’t just about transcribing a client’s wish list. It’s about <strong>user empathy</strong> - You have to put yourself in the end-user’s shoes: - What do they <em>actually</em> expect when they click “Submit”? - If they ask for a “summarizer,” are they looking for a three-sentence executive blurb or a technical list of action items? - What information is “signal” to them, and what is just “noise” they want excluded?</p>
+<p>You likely won’t get every detail right on the first try, and that’s okay. However, taking the time to truly deconstruct the task helps you plan your architecture effectively and, more importantly, manage the client’s expectations from day one.</p>
+<hr>
+</section>
+<section id="know-the-datadomain" class="level2">
+<h2 class="anchored" data-anchor-id="know-the-datadomain">2. Know the Data/Domain</h2>
+<p>Once the task is defined, your next challenge is mastering the data and the domain. In my experience, this is often where the most significant project friction occurs.</p>
+<p>There is a natural “communication gap” here: clients are usually domain experts who are non-technical, while engineers are technical experts who are rarely familiar with the nuances of healthcare, finance, or law. If you don’t bridge this gap early, you risk heading down a “one-way road” that is incredibly expensive to return from.</p>
+<p>In a healthcare project I worked on, the medical data was so specialized that we initially struggled to make progress. Our solution? We scheduled daily syncs with the client just to decode their terminology and workflows. While this felt like a poor use of time at first, it ended up being our smartest investment. It ensured we built on a foundation of facts rather than assumptions, saving us months of potential rework.</p>
+<p><strong>Strategies for mastering the domain:</strong></p>
+<ul>
+<li><p><strong>Build a Glossary</strong>: Learn industry-specific terms and exactly how the client defines them.</p></li>
+<li><p><strong>Audit Data Quality Early</strong>: The “Garbage In, Garbage Out” rule is true for LLMs as well. If your data is messy, your model’s reasoning will be too.</p></li>
+<li><p><strong>Identify Sensitive Content</strong>: Flag PII (Personally Identifiable Information) and regulated data (like HIPAA or GDPR) before a single token is sent to an API.</p></li>
+<li><p><strong>Identify Edge Cases</strong>: Ask the client: _“What is a scenario that happens only 1% of the time, but would be a disaster if the AI got it wrong?”</p></li>
+<li><p><strong>Reverse-Engineer the Human Workflow</strong>: How do humans currently solve this problem? If you can’t map the human process, you’ll struggle to automate it reliably.</p></li>
+</ul>
+<hr>
+</section>
+<section id="define-evals-early" class="level2">
+<h2 class="anchored" data-anchor-id="define-evals-early">3. Define Evals Early</h2>
+<blockquote class="blockquote">
+<p>“You can’t improve what you don’t measure.”</p>
+</blockquote>
+<p>This is arguably the most critical pillar of GenAI development. Without a robust evaluation framework, you are essentially operating without a clear way to system improvement. You might write a prompt, test it against five cases, and conclude that it “works.” But in production, LLMs fail in silent, creative ways that a handful of manual checks will never catch.</p>
+<p><strong>Evaluation is the foundation of the GenAI lifecycle:</strong></p>
+<ul>
+<li><p><strong>Build “Eval Sets” before Production Code</strong>: Treat your evaluation dataset as your “Ground Truth.” It should contain diverse examples, from the standard “happy path” to the weirdest edge cases you identified in Section 2.</p></li>
+<li><p><strong>The 2025 Metric Mix</strong>: Don’t rely solely on old-school metrics like BLEU or ROUGE. They cannot capture the meaning. Use a hybrid approach:</p>
+<ul>
+<li><p><strong>Deterministic Checks</strong>: For formatting (e.g., “Is the output valid JSON?”).</p></li>
+<li><p><strong>Semantic Similarity</strong>: Using embedding distance to check if the <em>meaning</em> matches your target, even if the words differ.</p></li>
+<li><p><strong>LLM-as-a-Judge</strong>: Use a “frontier” model (like GPT-5 or Claude 4.5 Sonnet) to grade your system’s performance based on specific rubrics like <em>faithfulness</em> or <em>helpfulness</em>.</p></li>
+<li><p><strong>Task specific metrics</strong>: Never forget to use task-specific metrics. Even though you use LLM for classification, using F1 score is almost always a good idea than using LLM as a judge. The only downside is you need to prepare ground truth.</p></li>
+</ul></li>
+<li><p><strong>Human-in-the-Loop (HITL)</strong>: This remains the gold standard. Use human experts to periodically audit the automated scores. If the automated eval says “Pass” but a human says “Fail,” your eval criteria need tuning.</p></li>
+<li><p><strong>Make Evals Fast and Versioned</strong>: You will run these hundreds of times. If your eval takes an hour, you won’t run it. Aim for a “smoke test” suite that runs in minutes and track how your scores change as you update prompts.</p></li>
+<li><p><strong>Relentless Error Analysis</strong>: Don’t just settle for a score (e.g., “80% accuracy”). Dive into the failures. Is the model hallucinating? Is it a formatting issue? Is the retrieved data wrong? It’s where you discover exactly what to optimize next.</p></li>
+</ul>
+<hr>
+</section>
+<section id="embrace-observability" class="level2">
+<h2 class="anchored" data-anchor-id="embrace-observability">4. Embrace Observability</h2>
+<p>Once you move from a local notebook to a production environment, monitoring is no longer a “nice-to-have”—it is your lifeline. Traditional software monitoring focuses on “uptime” (is the server alive?), but GenAI monitoring must track <strong>intelligence</strong> (is the answer correct, fast, and affordable?).</p>
+<p>Without proper observability, LLMs are a black box. You won’t know if a sudden spike in user complaints is due to a “silent” model update from OpenAI, a “data drift” in your vector database, or an inefficient prompt chain. LLM Observability tools like <strong>Langfuse</strong> (great for open-source flexibility) and <strong>LangSmith</strong> (if you are already in the LangChain ecosystem) are essential for peering inside this box.</p>
+<p><strong>Your observability strategy should focus on these three pillars:</strong></p>
+<ul>
+<li><p><strong>1. Deep Request Tracing:</strong> In a complex app (like a RAG pipeline), a single user question triggers multiple events: a search, a context retrieval, and finally an LLM call. Tracing allows you to map this entire lifecycle. If the final answer is wrong, you can pinpoint exactly where the “logic chain” broke—did the retriever find the wrong document, or did the LLM just ignore the right one?</p></li>
+<li><p><strong>2. Performance &amp; Unit Economics:</strong> Beyond total latency, you need to track <strong>TTFT (Time to First Token)</strong>. In 2025, users care more about how quickly the AI <em>starts</em> responding than when it finishes. Simultaneously, you must monitor per-user token consumption; a small bug in a loop can “burn” thousands of dollars in hours if you aren’t accounting for your token spend in real-time.</p></li>
+<li><p><strong>3. Quality &amp; Drift Detection:</strong> Models aren’t static. Providers update them “under the hood,” which can lead to silent failures—where the API returns a 200 OK but the response is gibberish or non-compliant. Continuous oversight helps you catch these “personality shifts” and hallucinations before they erode user trust.</p></li>
+</ul>
+<hr>
+</section>
+<section id="take-clients-onboard" class="level2">
+<h2 class="anchored" data-anchor-id="take-clients-onboard">5. Take Clients Onboard</h2>
+<p>While you are busy understanding the task and auditing the data, you must ensure you are communicating clearly with your stakeholders. It is your job to manage the “AI hype.” You need to be transparent about what the system can do, what its limitations are, and how you plan to improve it over time—especially if the task is complex and cannot be fully solved in the initial phases.</p>
+<p><strong>Key strategies for client alignment:</strong></p>
+<ul>
+<li><p><strong>Be explicit about capabilities</strong>: Clearly define what the AI can and <em>cannot</em> do. Don’t let them assume it has “human-level” reasoning if it’s just a classification tool.</p></li>
+<li><p><strong>Show failure cases upfront</strong>: Don’t just demo the “happy path.” Demonstrate limitations and edge cases early so there are no surprises during production.</p></li>
+<li><p><strong>Define responsibility boundaries</strong>: Establish where the AI’s job ends and where human oversight must begin. This is crucial for maintaining quality and trust.</p></li>
+<li><p><strong>Educate on the probabilistic nature</strong>: Explain that LLMs are not deterministic. Unlike traditional software, the outputs won’t always be perfect or 100% consistent, and the client needs to be prepared for that variability.</p></li>
+<li><p><strong>Agree on iteration cycles</strong>: Make it clear that GenAI development is experimental by nature. Success requires a cycle of testing, feedback, and refinement rather than a single “final” release.</p></li>
+</ul>
+<hr>
+</section>
+<section id="cost-considerations-from-day-1" class="level2">
+<h2 class="anchored" data-anchor-id="cost-considerations-from-day-1">6. Cost Considerations from day 1</h2>
+<p>There is a high probability that costs will catch you by surprise if they aren’t factored into your architecture from day one. It’s easy to build a high-performing PoC (Proof of Concept) using a five-page document, but production reality is different. When that same system suddenly has to process hundreds of 50-page documents, your servers won’t crash—but your LLM bill certainly might.</p>
+<p>As an engineer, it is your responsibility to set clear boundaries regarding the nature of the data and the expected costs. If a client is fascinated by a complex multi-chain agent that you built for a demo, you must help them understand the “unit economics” of that solution.</p>
+<p><strong>Tips for cost-effective scaling:</strong></p>
+<ul>
+<li><p><strong>Estimate Early and Often</strong>: Don’t wait for the first invoice. Calculate the expected cost per user and cost per request during the design phase.</p></li>
+<li><p><strong>The “Smaller Model” First Rule</strong>: If a smaller, faster model (like GPT-4o-mini or Claude Haiku) can achieve 90% of the result, use it. It optimizes both <strong>latency</strong> and <strong>cost</strong> simultaneously.</p></li>
+<li><p><strong>Manage Multi-Chain Workflows</strong>: Every step in an autonomous chain adds to the bill. Be transparent with stakeholders about the price of complexity.</p></li>
+<li><p><strong>Define Data Boundaries</strong>: Set limits on document sizes or the number of documents a user can upload to prevent costs.</p></li>
+</ul>
+<hr>
+</section>
+<section id="prioritize-the-feedback-loop" class="level2">
+<h2 class="anchored" data-anchor-id="prioritize-the-feedback-loop">7. Prioritize the Feedback Loop</h2>
+<p>Once you release the system to UAT (User Acceptance Testing) or production and real users start interacting with it, your most valuable asset is their feedback. Many teams treat feedback as an afterthought, but implementing a mechanism to capture user sentiment in the early stages is one of the smartest moves you can make.</p>
+<p>This feedback doesn’t just tell you if the system “works”, it builds a unique, high-value dataset that reveals exactly where the model’s responses fall short of user expectations. It is the ultimate tool for pressure-testing your initial assumptions.</p>
+<p><strong>How to build an effective feedback loop?</strong></p>
+<ul>
+<li><p><strong>Make it Frictionless</strong>: Use a simple one-click “Thumbs Up/Down” interface. If the barrier to giving feedback is too high, users simply won’t do it.</p></li>
+<li><p><strong>Capture Structured Data</strong>: When a user gives negative feedback, ask a quick follow-up question: <em>“Was the answer inaccurate, too long, or poorly formatted?”</em> This helps you categorize issues without manual review.</p></li>
+<li><p><strong>Analyze the Patterns</strong>: Look for clusters. Are users consistently complaining about the same feature? This is your signal to revisit your implementation.</p></li>
+<li><p><strong>Turn Feedback into Evals</strong>: Take the cases where users were dissatisfied and turn them into permanent test cases in your evaluation suite. This ensures you never regress on the same issue twice.</p></li>
+<li><p><strong>Close the Loop</strong>: Show your users that their input matters. Improving the system based on their direct feedback is the fastest way to build trust in an AI product.</p></li>
+</ul>
+<hr>
+</section>
+<section id="embrace-the-experimental-nature" class="level2">
+<h2 class="anchored" data-anchor-id="embrace-the-experimental-nature">8. Embrace the Experimental Nature</h2>
+<p>Stakeholders are often “wowed” by the initial PoC, only to become frustrated when they realize how many ways the system can fail in the wild. As an engineer, your job is to set the expectation that GenAI development is not a “one-and-done” task. It is a continuous, iterative process.</p>
+<p>A production system is a moving target: prompt performance shifts, model providers push updates, the nature of incoming data evolves, and user feedback will constantly pull the project in new directions. All of these factors force you into a state of perpetual experimentation. To make your case to leadership, don’t just ask for more time; present a structured plan for iteration. One of the most effective habits is to align your experimentation with your feedback loops.</p>
+<section id="example-the-prompt-release-strategy" class="level4">
+<h4 class="anchored" data-anchor-id="example-the-prompt-release-strategy">Example: The “Prompt Release” Strategy</h4>
+<p>In one project, we realized we needed to update our prompts constantly based on evolving client needs. To manage this without causing chaos, we treated prompt updates with the same discipline as code deployments. We established a dedicated <strong>“Prompt Release Day.”</strong></p>
+<p><strong>Our weekly cycle looked like this:</strong></p>
+<ul>
+<li><p><strong>Friday</strong>: Deadline for receiving the “First Draft” of requirements or feedback from the client.</p></li>
+<li><p><strong>Monday – Wednesday</strong>: Dedicated time for experimentation, testing new prompt versions, and running them through our <strong>Eval sets</strong>.</p></li>
+<li><p><strong>Thursday</strong>: Release Day. The new, tested prompts are pushed to production.</p></li>
+</ul>
+<p>This process did two things: it gave the engineers a predictable window to experiment, and it gave the clients a <strong>reliable release cycle</strong> for when they would see improvements. It turned “unpredictable AI magic” into a standard, manageable engineering workflow.</p>
+<hr>
+</section>
+</section>
+<section id="treat-prompts-as-code" class="level2">
+<h2 class="anchored" data-anchor-id="treat-prompts-as-code">9. Treat Prompts as Code</h2>
+<p>Building on the idea of a release cycle, the biggest mindset shift you need is this: <strong>Treat your prompts with the same rigor as your application code.</strong> If your prompts are scattered across random Jupyter notebooks or buried as hard-coded strings deep inside your functions, you are setting yourself up for a maintenance nightmare. Treating prompts as code means applying the same engineering disciplines you use for any other part of your technical stack.</p>
+<p><strong>What “Prompts as Code” looks like in practice:</strong></p>
+<ul>
+<li><p><strong>Version Control</strong>: Store your prompts in your repository, or even better, use a dedicated prompt management tool like <strong>Langfuse</strong>. This allows you to track exactly who changed what and, more importantly, enables you to roll back to a “known-good” version immediately if a new tweak causes the model’s performance to degrade.</p></li>
+<li><p><strong>Prompt Reviews</strong>: Never push a major prompt change without a peer review. In GenAI, a single word change like swapping “must” for “should” can drastically alter the model’s output logic. A second pair of eyes is essential to catch these subtle shifts in behavior.</p></li>
+<li><p><strong>Templating</strong>: Don’t mix logic with data. Use structured formats to keep your system instructions separate from user inputs. While the “how-to” of prompt engineering is outside the scope of this article, keeping your prompts clean and modular is a fundamental part of building a manageable system.</p></li>
+<li><p><strong>Automated Testing</strong>: Just as you wouldn’t ship a function without a unit test, don’t ship a prompt without running it against your <strong>Eval set</strong>. This testing should be multi-dimensional, covering everything from expected output quality to security checks (like prompt injection).</p></li>
+</ul>
+<hr>
+</section>
+<section id="frameworks-might-be-overkill" class="level2">
+<h2 class="anchored" data-anchor-id="frameworks-might-be-overkill">10. Frameworks Might Be Overkill</h2>
+<p>I have seen many teams rush to adopt frameworks like LangChain or LlamaIndex the moment they start a project. In the early prototyping stages, these tools feel like magic—they make complex tasks look easy with just a few lines of code and standard implementations.</p>
+<p>However, as your system grows and your LLM chains become more complex, you may realize that these frameworks add unwanted complexities to the project.</p>
+<p>By design, they abstract away much of the underlying logic. While this saves time initially, it eventually becomes a bottleneck. You often end up “blind” to the internal prompts being used, and simple customizations can become incredibly tricky. I’ve seen engineers spend more time fighting a framework’s codebase or trying to override its defaults than they would have spent writing the actual business logic from scratch.</p>
+<p><strong>The “Simple-First” Approach:</strong>&nbsp;It is often better to start with simple, direct API calls and focus on structuring your own codebase properly from day one. This is where your&nbsp;<strong>traditional software engineering skills</strong>&nbsp;really come to the rescue. Building your own thin wrappers around LLM calls gives you:</p>
+<ul>
+<li><p><strong>Total Transparency</strong>: You know exactly what prompt is being sent and why.</p></li>
+<li><p><strong>Easier Debugging</strong>: There are no hidden “black-box” layers between your code and the model.</p></li>
+<li><p><strong>Long-term Maintainability</strong>: You aren’t at the mercy of a framework’s breaking changes or opinionated updates.</p></li>
+</ul>
+<p>Don’t let the hype around “agentic frameworks” distract you. Sometimes, a well-organized Python script beats a complex library.</p>
+<hr>
+</section>
+<section id="error-analysis-is-precious" class="level2">
+<h2 class="anchored" data-anchor-id="error-analysis-is-precious">11. Error Analysis is Precious</h2>
+<p>Once your evals are running, they will provide a performance score but a score alone doesn’t tell you how to improve. You need to look under the hood to understand exactly what kind of errors are occurring, where they are happening, and how to fix them. This is where <strong>Error Analysis</strong> becomes your most valuable tool.</p>
+<p>GenAI applications demand the same rigorous error analysis used in traditional Machine Learning. Instead of just seeing that the system failed, you need to categorize <em>why</em> it failed.</p>
+<p>To make error analysis effective, categorize your failures into buckets. This sounds simple, but in practice you’ll discover new failure modes you never imagined. Here are some that I could recall.</p>
+<ul>
+<li><p><strong>Retrieval Failures</strong>: Did the system fail because the RAG pipeline didn’t find the right information? (Fix: Optimize your embeddings or chunking).</p></li>
+<li><p><strong>Reasoning Failures</strong>: Did the AI have the right information but failed to connect the dots? (Fix: Improve the prompt or move to a more capable model).</p></li>
+<li><p><strong>Formatting/Constraint Failures</strong>: Did the AI follow the instructions but fail to output the correct JSON or XML format? (Fix: Use few-shot examples or constrained decoding).</p></li>
+<li><p><strong>Hallucinations</strong>: Did the AI invent facts that weren’t in the source? (Fix: Tighten your system prompt or add “grounding” checks).</p></li>
+</ul>
+<hr>
+</section>
+<section id="expectation-vs-reality-trap" class="level2">
+<h2 class="anchored" data-anchor-id="expectation-vs-reality-trap">12. Expectation vs Reality Trap</h2>
+<p>In the beginning, everyone tries their best to build a “perfect” system. But as the project nears the finish line, both you and your stakeholders will likely face a harsh <strong>Expectation vs.&nbsp;Reality</strong> moment.</p>
+<p>A demo is a controlled environment. It works because you are using curated data, “happy path” queries, and perhaps a model that hasn’t been hit with rate limits or latency spikes yet. Production, however, is messy and unpredictable.</p>
+<p><strong>Why the gap exists:</strong></p>
+<ul>
+<li><p><strong>The “Golden Example” Fallacy</strong>: Demos usually showcase the 5% of cases where the AI is brilliant. Production forces the AI to handle the other 95%—the ambiguous, the messy, and the nonsensical inputs.</p></li>
+<li><p><strong>The Creativity of Users</strong>: You cannot predict how a real user will interact with your system. They will ask questions you never tested and use the tool in ways you never intended.</p></li>
+<li><p><strong>Hidden Complexity</strong>: As you add guardrails, PII filters, and cost-management logic, the “clean” performance of the initial PoC can start to degrade.</p></li>
+</ul>
+<p>Don’t aim for a “perfect” launch. Aim for a <strong>resilient</strong> one. Prepare your stakeholders for the fact that the first version in the wild will reveal gaps you couldn’t see in the lab. This is why the feedback loops and experimentation cycles we discussed earlier are so critical.</p>
+<hr>
+</section>
+<section id="conclusion" class="level1">
+<h1>Conclusion</h1>
+<p>Building GenAI applications is part science and part art. It is a unique discipline that encompasses everything from the nuances of your data and the capabilities of the model to the way you orchestrate chains and the rigor you apply to your prompts. Most importantly, it is defined by how you plan for continuous improvement and iteration.</p>
+<p>Don’t view these lessons as a set of strict, unbreakable rules. This field is evolving so rapidly that what holds true today might shift by tomorrow. You will undoubtedly encounter your own unique challenges and learn your own lessons along the journey.</p>
+<p>I will try to continuously update this post. In the meantime please leave comments for any suggestion, modifications you want to make or simply to put in your opinion. BTW feel free to open a PR as well. I’ll see you in the next one. Bye!</p>
+
+
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const disableStylesheet = (stylesheets) => {
+    for (let i=0; i < stylesheets.length; i++) {
+      const stylesheet = stylesheets[i];
+      stylesheet.rel = 'prefetch';
+    }
+  }
+  const enableStylesheet = (stylesheets) => {
+    for (let i=0; i < stylesheets.length; i++) {
+      const stylesheet = stylesheets[i];
+      stylesheet.rel = 'stylesheet';
+    }
+  }
+  const manageTransitions = (selector, allowTransitions) => {
+    const els = window.document.querySelectorAll(selector);
+    for (let i=0; i < els.length; i++) {
+      const el = els[i];
+      if (allowTransitions) {
+        el.classList.remove('notransition');
+      } else {
+        el.classList.add('notransition');
+      }
+    }
+  }
+  const toggleGiscusIfUsed = (isAlternate, darkModeDefault) => {
+    const baseTheme = document.querySelector('#giscus-base-theme')?.value ?? 'light';
+    const alternateTheme = document.querySelector('#giscus-alt-theme')?.value ?? 'dark';
+    let newTheme = '';
+    if(darkModeDefault) {
+      newTheme = isAlternate ? baseTheme : alternateTheme;
+    } else {
+      newTheme = isAlternate ? alternateTheme : baseTheme;
+    }
+    const changeGiscusTheme = () => {
+      // From: https://github.com/giscus/giscus/issues/336
+      const sendMessage = (message) => {
+        const iframe = document.querySelector('iframe.giscus-frame');
+        if (!iframe) return;
+        iframe.contentWindow.postMessage({ giscus: message }, 'https://giscus.app');
+      }
+      sendMessage({
+        setConfig: {
+          theme: newTheme
+        }
+      });
+    }
+    const isGiscussLoaded = window.document.querySelector('iframe.giscus-frame') !== null;
+    if (isGiscussLoaded) {
+      changeGiscusTheme();
+    }
+  }
+  const toggleColorMode = (alternate) => {
+    // Switch the stylesheets
+    const alternateStylesheets = window.document.querySelectorAll('link.quarto-color-scheme.quarto-color-alternate');
+    manageTransitions('#quarto-margin-sidebar .nav-link', false);
+    if (alternate) {
+      enableStylesheet(alternateStylesheets);
+      for (const sheetNode of alternateStylesheets) {
+        if (sheetNode.id === "quarto-bootstrap") {
+          toggleBodyColorMode(sheetNode);
+        }
+      }
+    } else {
+      disableStylesheet(alternateStylesheets);
+      toggleBodyColorPrimary();
+    }
+    manageTransitions('#quarto-margin-sidebar .nav-link', true);
+    // Switch the toggles
+    const toggles = window.document.querySelectorAll('.quarto-color-scheme-toggle');
+    for (let i=0; i < toggles.length; i++) {
+      const toggle = toggles[i];
+      if (toggle) {
+        if (alternate) {
+          toggle.classList.add("alternate");     
+        } else {
+          toggle.classList.remove("alternate");
+        }
+      }
+    }
+    // Hack to workaround the fact that safari doesn't
+    // properly recolor the scrollbar when toggling (#1455)
+    if (navigator.userAgent.indexOf('Safari') > 0 && navigator.userAgent.indexOf('Chrome') == -1) {
+      manageTransitions("body", false);
+      window.scrollTo(0, 1);
+      setTimeout(() => {
+        window.scrollTo(0, 0);
+        manageTransitions("body", true);
+      }, 40);  
+    }
+  }
+  const isFileUrl = () => { 
+    return window.location.protocol === 'file:';
+  }
+  const hasAlternateSentinel = () => {  
+    let styleSentinel = getColorSchemeSentinel();
+    if (styleSentinel !== null) {
+      return styleSentinel === "alternate";
+    } else {
+      return false;
+    }
+  }
+  const setStyleSentinel = (alternate) => {
+    const value = alternate ? "alternate" : "default";
+    if (!isFileUrl()) {
+      window.localStorage.setItem("quarto-color-scheme", value);
+    } else {
+      localAlternateSentinel = value;
+    }
+  }
+  const getColorSchemeSentinel = () => {
+    if (!isFileUrl()) {
+      const storageValue = window.localStorage.getItem("quarto-color-scheme");
+      return storageValue != null ? storageValue : localAlternateSentinel;
+    } else {
+      return localAlternateSentinel;
+    }
+  }
+  const darkModeDefault = false;
+  let localAlternateSentinel = darkModeDefault ? 'alternate' : 'default';
+  // Dark / light mode switch
+  window.quartoToggleColorScheme = () => {
+    // Read the current dark / light value 
+    let toAlternate = !hasAlternateSentinel();
+    toggleColorMode(toAlternate);
+    setStyleSentinel(toAlternate);
+    toggleGiscusIfUsed(toAlternate, darkModeDefault);
+  };
+  // Ensure there is a toggle, if there isn't float one in the top right
+  if (window.document.querySelector('.quarto-color-scheme-toggle') === null) {
+    const a = window.document.createElement('a');
+    a.classList.add('top-right');
+    a.classList.add('quarto-color-scheme-toggle');
+    a.href = "";
+    a.onclick = function() { try { window.quartoToggleColorScheme(); } catch {} return false; };
+    const i = window.document.createElement("i");
+    i.classList.add('bi');
+    a.appendChild(i);
+    window.document.body.appendChild(a);
+  }
+  // Switch to dark mode if need be
+  if (hasAlternateSentinel()) {
+    toggleColorMode(true);
+  } else {
+    toggleColorMode(false);
+  }
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const onCopySuccess = function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  }
+  const getTextToCopy = function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+    text: getTextToCopy
+  });
+  clipboard.on('success', onCopySuccess);
+  if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+    // For code content inside modals, clipBoardJS needs to be initialized with a container option
+    // TODO: Check when it could be a function (https://github.com/zenorocha/clipboard.js/issues/860)
+    const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+      text: getTextToCopy,
+      container: window.document.getElementById('quarto-embedded-source-code-modal')
+    });
+    clipboardModal.on('success', onCopySuccess);
+  }
+    var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+    var mailtoRegex = new RegExp(/^mailto:/);
+      var filterRegex = new RegExp("https:\/\/www\.pmgautam\.com");
+    var isInternal = (href) => {
+        return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+    }
+    // Inspect non-navigation links and adorn them if external
+ 	var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+    for (var i=0; i<links.length; i++) {
+      const link = links[i];
+      if (!isInternal(link.href)) {
+        // undo the damage that might have been done by quarto-nav.js in the case of
+        // links that we want to consider external
+        if (link.dataset.originalHref !== undefined) {
+          link.href = link.dataset.originalHref;
+        }
+      }
+    }
+  function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+    const config = {
+      allowHTML: true,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start',
+    };
+    if (contentFn) {
+      config.content = contentFn;
+    }
+    if (onTriggerFn) {
+      config.onTrigger = onTriggerFn;
+    }
+    if (onUntriggerFn) {
+      config.onUntrigger = onUntriggerFn;
+    }
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      if (note) {
+        return note.innerHTML;
+      } else {
+        return "";
+      }
+    });
+  }
+  const xrefs = window.document.querySelectorAll('a.quarto-xref');
+  const processXRef = (id, note) => {
+    // Strip column container classes
+    const stripColumnClz = (el) => {
+      el.classList.remove("page-full", "page-columns");
+      if (el.children) {
+        for (const child of el.children) {
+          stripColumnClz(child);
+        }
+      }
+    }
+    stripColumnClz(note)
+    if (id === null || id.startsWith('sec-')) {
+      // Special case sections, only their first couple elements
+      const container = document.createElement("div");
+      if (note.children && note.children.length > 2) {
+        container.appendChild(note.children[0].cloneNode(true));
+        for (let i = 1; i < note.children.length; i++) {
+          const child = note.children[i];
+          if (child.tagName === "P" && child.innerText === "") {
+            continue;
+          } else {
+            container.appendChild(child.cloneNode(true));
+            break;
+          }
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(container);
+        }
+        return container.innerHTML
+      } else {
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        return note.innerHTML;
+      }
+    } else {
+      // Remove any anchor links if they are present
+      const anchorLink = note.querySelector('a.anchorjs-link');
+      if (anchorLink) {
+        anchorLink.remove();
+      }
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(note);
+      }
+      // TODO in 1.5, we should make sure this works without a callout special case
+      if (note.classList.contains("callout")) {
+        return note.outerHTML;
+      } else {
+        return note.innerHTML;
+      }
+    }
+  }
+  for (var i=0; i<xrefs.length; i++) {
+    const xref = xrefs[i];
+    tippyHover(xref, undefined, function(instance) {
+      instance.disable();
+      let url = xref.getAttribute('href');
+      let hash = undefined; 
+      if (url.startsWith('#')) {
+        hash = url;
+      } else {
+        try { hash = new URL(url).hash; } catch {}
+      }
+      if (hash) {
+        const id = hash.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note !== null) {
+          try {
+            const html = processXRef(id, note.cloneNode(true));
+            instance.setContent(html);
+          } finally {
+            instance.enable();
+            instance.show();
+          }
+        } else {
+          // See if we can fetch this
+          fetch(url.split('#')[0])
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.getElementById(id);
+            if (note !== null) {
+              const html = processXRef(id, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      } else {
+        // See if we can fetch a full url (with no hash to target)
+        // This is a special case and we should probably do some content thinning / targeting
+        fetch(url)
+        .then(res => res.text())
+        .then(html => {
+          const parser = new DOMParser();
+          const htmlDoc = parser.parseFromString(html, "text/html");
+          const note = htmlDoc.querySelector('main.content');
+          if (note !== null) {
+            // This should only happen for chapter cross references
+            // (since there is no id in the URL)
+            // remove the first header
+            if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+              note.children[0].remove();
+            }
+            const html = processXRef(null, note);
+            instance.setContent(html);
+          } 
+        }).finally(() => {
+          instance.enable();
+          instance.show();
+        });
+      }
+    }, function(instance) {
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            div.style.left = 0;
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+        // Handle positioning of the toggle
+    window.addEventListener(
+      "resize",
+      throttle(() => {
+        elRect = undefined;
+        if (selectedAnnoteEl) {
+          selectCodeLines(selectedAnnoteEl);
+        }
+      }, 10)
+    );
+    function throttle(fn, ms) {
+    let throttle = false;
+    let timer;
+      return (...args) => {
+        if(!throttle) { // first call gets through
+            fn.apply(this, args);
+            throttle = true;
+        } else { // all the others get throttled
+            if(timer) clearTimeout(timer); // cancel #2
+            timer = setTimeout(() => {
+              fn.apply(this, args);
+              timer = throttle = false;
+            }, ms);
+        }
+      };
+    }
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+<script src="https://utteranc.es/client.js" repo="pmgautam/pmgautam.com" issue-term="pathname" theme="github-light" crossorigin="anonymous" async="">
+</script>
+</div> <!-- /content -->
+
+
+
+
+</body></html>

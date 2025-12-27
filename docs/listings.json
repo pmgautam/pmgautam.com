@@ -2,6 +2,7 @@
   {
     "listing": "/index.html",
     "items": [
+      "/posts/lessons-learned-building-genai-apps.html",
       "/posts/openai-clip-explained.html",
       "/posts/barlow-twins-explanation.html",
       "/posts/class-activation-map-explained.html",
