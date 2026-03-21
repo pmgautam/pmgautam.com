@@ -1,6 +1,8 @@
 project:
   type: website
   output-dir: docs
+  resources:
+    - robots.txt
 
 website:
   title: "A blog by Pramesh Gautam"
@@ -43,6 +45,8 @@ format:
       light: flatly
       dark: darkly
     css: styles.css
+    canonical-url: true
+    include-in-header: _includes/structured-data.html
 execute:
   freeze: true
     

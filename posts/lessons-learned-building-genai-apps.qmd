@@ -1,7 +1,7 @@
 ---
 title: "From PoC to Production: Lessons Learned Building GenAI Apps"
 pagetitle: "Lessons Learned Building GenAI apps | Pramesh Gautam"
-description: "Sharing my experience of writing LLM-based apps"
+description: "Practical lessons from two years building production LLM applications — what works, what doesn't, and why PoC-to-production is harder than it looks."
 author: Pramesh Gautam
 date: "2025-12-28"
 format:
@@ -12,7 +12,7 @@ format:
       toc-depth: 2
       number-sections: false
 categories: [GenAI, Engineering, LLM]
-image: "../docs/gen-ai-lessons-learned/gen-ai-lessons-learned-cover.jpg"
+image: "images/gen-ai-lessons-learned-cover.jpg"
 ---
 
 ## Introduction
